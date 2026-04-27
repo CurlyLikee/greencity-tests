@@ -4,7 +4,8 @@
 
 This repository contains manual test cases and automated UI tests for the **Events** page of the GreenCity web application.
 
-Automated tests are written in **Python** using **Selenium WebDriver** and the built-in **unittest** framework.
+Automated tests are written in **Python** using **Selenium WebDriver** and the built-in **unittest** framework.  
+Tests follow the **Page Object Pattern (PO)** for clean separation of locators, page actions, and test logic.
 
 ---
 
@@ -23,8 +24,28 @@ greencity-tests/
 ├── test-cases/
 │   └── events-page-tests.md
 └── tests/
-    ├── test_events_page.py
-    └── utils.py
+    ├── utils.py                            # Driver factory
+    ├── test_events_page.py                 # Test cases (TC-01 … TC-05)
+    └── pages/
+        ├── __init__.py
+        ├── base_page.py                    # BasePage — header, language, navigation
+        ├── events_page.py                  # EventsPage — events list, filters, search
+        └── components/
+            ├── __init__.py
+            ├── base_component.py           # BaseComponent — scoped element search
+            └── event_card_component.py     # EventCardComponent — single event card
+```
+
+---
+
+## Page Object Hierarchy
+
+```
+BasePage                         (header, sign-in, language, navigation)
+  └── EventsPage                 (event cards, filters, search, items count)
+
+BaseComponent                    (scoped find_element within a root WebElement)
+  └── EventCardComponent         (event name, click title, click 'More')
 ```
 
 ---
@@ -42,13 +63,15 @@ pip install -r requirements.txt
 ### 2. Run all tests
 
 ```bash
-python -m unittest discover tests
+cd tests
+python -m unittest discover .
 ```
 
 ### 3. Run a specific test
 
 ```bash
-python -m unittest tests.test_events_page.EventsPageTests.test_events_list_is_displayed_on_page_load
+cd tests
+python -m unittest test_events_page.EventsPageTests.test_events_list_is_displayed_on_page_load
 ```
 
 ---
