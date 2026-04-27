@@ -1,11 +1,11 @@
-# GreenCity — Events Page Test Cases
+# GreenCity — Events Page UI Automation
 
 ## Project Description
 
-This repository contains manual test cases and automated UI tests for the **Events** page of the GreenCity web application.
+Automated UI tests for the **Events** page of the GreenCity web application.
 
-Automated tests are written in **Python** using **Selenium WebDriver** and the built-in **unittest** framework.  
-Tests follow the **Page Object Pattern (PO)** for clean separation of locators, page actions, and test logic.
+**Stack:** Python · Selenium WebDriver · Pytest · Allure Report  
+**Architecture:** Page Object Model (POM) + Component-based approach
 
 ---
 
@@ -19,38 +19,42 @@ Tests follow the **Page Object Pattern (PO)** for clean separation of locators, 
 
 ```
 greencity-tests/
-├── README.md
+├── conftest.py                # Pytest fixtures (driver setup/teardown)
+├── pytest.ini                 # Pytest + Allure config
 ├── requirements.txt
-├── test-cases/
-│   └── events-page-tests.md
-└── tests/
-    ├── utils.py                            # Driver factory
-    ├── test_events_page.py                 # Test cases (TC-01 … TC-05)
-    └── pages/
-        ├── __init__.py
-        ├── base_page.py                    # BasePage — header, language, navigation
-        ├── events_page.py                  # EventsPage — events list, filters, search
-        └── components/
-            ├── __init__.py
-            ├── base_component.py           # BaseComponent — scoped element search
-            └── event_card_component.py     # EventCardComponent — single event card
+├── .gitignore
+├── src/
+│   ├── pages/
+│   │   ├── base_page.py       # BasePage — driver, waits, helpers
+│   │   └── events_page.py     # EventsPage — events listing logic
+│   └── components/
+│       ├── base_component.py  # BaseComponent — scoped element search
+│       ├── header.py          # Header — sign-in, language, navigation
+│       ├── filter_panel.py    # FilterPanel — tag/category filters
+│       └── event_card.py      # EventCard — single event card
+├── tests/
+│   └── test_events_page.py    # 5 automated test cases
+└── test-cases/
+    └── events-page-tests.md   # Manual test case descriptions
 ```
 
 ---
 
-## Page Object Hierarchy
+## Architecture
 
 ```
-BasePage                         (header, sign-in, language, navigation)
-  └── EventsPage                 (event cards, filters, search, items count)
+BasePage                        (driver, WebDriverWait, helpers)
+  └── EventsPage                (events listing, search, components)
 
-BaseComponent                    (scoped find_element within a root WebElement)
-  └── EventCardComponent         (event name, click title, click 'More')
+BaseComponent                   (scoped find_element within root WebElement)
+  ├── Header                    (sign-in, language, navigation)
+  ├── FilterPanel               (tag/category filter buttons)
+  └── EventCard                 (event name, click title, click 'More')
 ```
 
 ---
 
-## How to Run the Tests
+## How to Run
 
 ### 1. Install dependencies
 
@@ -58,37 +62,35 @@ BaseComponent                    (scoped find_element within a root WebElement)
 pip install -r requirements.txt
 ```
 
-> You also need **Google Chrome** installed and a matching **ChromeDriver** available in your PATH.
+> You also need **Google Chrome** and a matching **ChromeDriver** in your PATH.
 
-### 2. Run all tests
+### 2. Run tests
 
 ```bash
-cd tests
-python -m unittest discover .
+pytest --alluredir=allure-results
 ```
 
-### 3. Run a specific test
+### 3. Generate Allure report
 
 ```bash
-cd tests
-python -m unittest test_events_page.EventsPageTests.test_events_list_is_displayed_on_page_load
+allure serve allure-results
 ```
 
 ---
 
-## Test Cases Overview
+## Test Cases
 
-| ID | Test name | Type |
-|----|-----------|------|
-| TC-01 | `test_events_list_is_displayed_on_page_load` | Positive |
-| TC-02 | `test_filter_by_category_updates_list` | Positive |
-| TC-03 | `test_click_event_opens_detail_page` | Positive |
-| TC-04 | `test_search_with_no_results_shows_empty_state` | Negative |
-| TC-05 | `test_page_title_is_not_empty` | Negative / Smoke |
+| ID    | Test name                                      | Type            |
+|-------|------------------------------------------------|-----------------|
+| TC-01 | `test_events_list_is_displayed_on_page_load`   | Positive        |
+| TC-02 | `test_filter_by_category_updates_list`          | Positive        |
+| TC-03 | `test_click_event_opens_detail_page`            | Positive        |
+| TC-04 | `test_search_with_no_results_shows_empty_state` | Negative        |
+| TC-05 | `test_page_title_is_not_empty`                  | Negative / Smoke|
 
 ---
 
 ## Author
 
-**[Alona Hruieva]**  
-QA Practice Assignment - GreenCity Events Page Automation
+**Alona Hruieva**  
+QA Practice — GreenCity Events Page Automation
